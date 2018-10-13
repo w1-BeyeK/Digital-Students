@@ -35,8 +35,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
             $obj->success = 1;
             $obj->redirectUrl = "../dashboard/";
         } else {
-            $obj = new stdClass();
-            $obj->success = 0;
+            $obj = $result;
         }
         echo json_encode($obj);
     }
