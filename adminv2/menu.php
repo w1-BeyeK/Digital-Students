@@ -85,6 +85,11 @@ define("PROJECT_ROOT", "localhost:999/ERP/adminv2/");
                         <li><i class="menu-icon fa fa-paper-plane"></i><a href="pages-forget.html">Forget Pass</a></li>
                     </ul>
                 </li>
+
+                <h3 class="menu-title">Users</h3>
+                <li>
+                    <a href="../users"> <i class="menu-icon fa fa-users"></i>Users </a>
+                </li>
             </ul>
         </div><!-- /.navbar-collapse -->
     </nav>
