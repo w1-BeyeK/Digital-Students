@@ -34,7 +34,7 @@ class user
 
     public function login() {
         // Find user with credentials
-        $query = "select * from ds_users where email = '$this->email' AND password = '$this->password'";
+        $query = "select * from $this->table_name where email = '$this->email' AND password = '$this->password'";
         $user = $this->conn->QuerySingleRowArray($query);
 
         if($user) {
@@ -62,7 +62,7 @@ class user
     }
 
     public function read() {
-        $query = "select * from ds_users";
+        $query = "select * from $this->table_name";
         $result = $this->conn->QueryArray($query);
 
         return $result;
