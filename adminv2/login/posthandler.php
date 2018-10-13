@@ -7,27 +7,37 @@
  */
 session_start();
 require_once "../includes/mysql.class.php";
+require_once "../includes/util.php";
 $db = new MySQL();
 
-if($_POST["action"] == "login") {
-    $user = !empty($_POST["user"])? $_POST["user"] : "";
-    $pass = !empty($_POST["pass"])? $_POST["pass"] : "";
+if($_SERVER["REQUEST_METHOD"] == "POST") {
+    $action = $_POST["action"];
+    if(empty($action)) {
+        return;
+    }
 
-    $password = htmlentities($db->SQLFix($_POST["pass"]), ENT_QUOTES);
-    $salt = md5($password); // Create salt
-    $hashedPass = pbkdf2($password, $salt); // Encrypt password
+    if($action == "login") {
+        $credentials = array("email" => $_POST["user"], "password" => $_POST["pass"]);
 
-    $query = "select * from ds_users where email = '$user' and password = '$hashedPass' and active = 1";
+        $result = json_decode(util::call_api("POST", "http://localhost:999/project/api/user/login.php", $credentials));
+        if(isset($result->token)) {
+            if(session_status() == PHP_SESSION_NONE) {
+                session_start();
+            }
 
-    $result = $db->QuerySingleRow($query);
+            // Empty all session variables
+            session_unset();
 
-    if($result) {
-        $_SESSION["user_id"] = $result->id;
-        $_SESSION["user_code"] = $result->code;
-        $_SESSION["user_name"] = $result->name;
-        $_SESSION["user_role"] = $result->admin;
-        echo json_encode("success");
-    } else {
-        echo json_encode("failed to login");
+            $_SESSION["token"] = $result->token;
+            // Maybe get additional user info but for now token is enough
+
+            $obj = new stdClass();
+            $obj->success = 1;
+            $obj->redirectUrl = "../dashboard/";
+        } else {
+            $obj = new stdClass();
+            $obj->success = 0;
+        }
+        echo json_encode($obj);
     }
 }
